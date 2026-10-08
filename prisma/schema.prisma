@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Categoria {
+  id          Int        @id @default(autoincrement())
+  nombre      String     @unique
+  descripcion String?
+  imagen      String?
+  productos   Producto[]
+}
+
+model Marca {
+  id        Int        @id @default(autoincrement())
+  nombre    String     @unique
+  pais      String?
+  logo      String?
+  productos Producto[]
+}
+
+model Producto {
+  id          Int          @id @default(autoincrement())
+  nombre      String
+  descripcion String?
+  precio      Float
+  stock       Int
+  imagen      String?
+  destacado   Boolean      @default(false)
+  descuento   Float        @default(0)
+  categoriaId Int
+  marcaId     Int
+  categoria   Categoria    @relation(fields: [categoriaId], references: [id])
+  marca       Marca        @relation(fields: [marcaId], references: [id])
+  pedidoItems PedidoItem[]
+  promociones Promocion[]
+}
+
+model Cliente {
+  id        Int      @id @default(autoincrement())
+  nombre    String
+  email     String   @unique
+  telefono  String?
+  direccion String?
+  pedidos   Pedido[]
+}
+
+model Pedido {
+  id         Int          @id @default(autoincrement())
+  clienteId  Int
+  fecha      DateTime     @default(now())
+  total      Float
+  estado     String       @default("pendiente")
+  metodoPago String?
+  cliente    Cliente      @relation(fields: [clienteId], references: [id])
+  items      PedidoItem[]
+}
+
+model PedidoItem {
+  id             Int      @id @default(autoincrement())
+  pedidoId       Int
+  productoId     Int
+  cantidad       Int
+  precioUnitario Float
+  pedido         Pedido   @relation(fields: [pedidoId], references: [id])
+  producto       Producto @relation(fields: [productoId], references: [id])
+}
+
+model Promocion {
+  id          Int       @id @default(autoincrement())
+  titulo      String
+  descripcion String?
+  descuento   Float
+  fechaInicio DateTime
+  fechaFin    DateTime
+  productoId  Int?
+  producto    Producto? @relation(fields: [productoId], references: [id])
+}
