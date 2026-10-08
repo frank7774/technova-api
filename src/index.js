@@ -124,6 +124,26 @@ api.post('/pedidos', async (req, res, next) => {
   } catch (e) { next(e); }
 });
 
+app.get('/', (req, res) => {
+  res.json({
+    name: 'TechNova API',
+    version: '1.0.0',
+    status: 'online',
+    description: 'API REST de TechNova Store - tienda de tecnologia premium',
+    endpoints: {
+      health: '/api/health',
+      productos: '/api/productos',
+      productoDetalle: '/api/productos/:id',
+      categorias: '/api/categorias',
+      marcas: '/api/marcas',
+      promociones: '/api/promociones',
+      clientes: '/api/clientes',
+      pedidos: '/api/pedidos'
+    },
+    repository: 'https://github.com/frank7774/technova-api'
+  });
+});
+
 app.use('/api', api);
 
 app.use((err, req, res, next) => {
